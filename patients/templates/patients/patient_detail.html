@@ -1,0 +1,33 @@
+<h2>{{ patient.patient_number }}</h2>
+
+<div>
+    <p><strong>Name:</strong> {{ patient.first_name }} {{ patient.last_name }}</p>
+    <p><strong>Phone:</strong> {{ patient.phone }}</p>
+</div>
+
+<hr>
+
+<h3>Consultation History</h3>
+
+{% for c in consultations %}
+<div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+
+    <h4>{{ c.created_at }}</h4>
+
+    <p><strong>Complaint:</strong> {{ c.complaint }}</p>
+
+    <p><strong>Vitals:</strong>
+        BP: {{ c.blood_pressure }},
+        Temp: {{ c.temperature }},
+        Pulse: {{ c.pulse_rate }}
+    </p>
+
+    <p><strong>Diagnosis:</strong> {{ c.diagnosis }}</p>
+
+    <p><strong>Treatment:</strong> {{ c.treatment }}</p>
+
+</div>
+{% endfor %}
+<a href="{% url 'create_consultation' patient.id %}">
+    + New Consultation
+</a>

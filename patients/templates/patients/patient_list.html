@@ -1,0 +1,44 @@
+<h2>Patients</h2>
+
+<input type="text" id="searchBox" placeholder="Search patients..." />
+
+<hr>
+
+<div id="results"></div>
+
+<script>
+const input = document.getElementById("searchBox");
+const results = document.getElementById("results");
+
+input.addEventListener("input", async function () {
+
+    const query = input.value;
+
+    if (query.length < 1) {
+        results.innerHTML = "";
+        return;
+    }
+
+    const response = await fetch(`/api/patients/?q=` + encodeURIComponent(query));
+    const data = await response.json();
+
+    results.innerHTML = "";
+
+    data.forEach(patient => {
+        results.innerHTML += `
+            <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+                <p><strong>${patient.patient_number}</strong> - ${patient.name}</p>
+                <p>${patient.phone}</p>
+
+                <a href="/patients/${patient.id}/">
+                    Open Profile
+                </a> |
+
+                <a href="/consultations/new/${patient.id}/">
+                    Start Consultation
+                </a>
+            </div>
+        `;
+    });
+});
+</script>

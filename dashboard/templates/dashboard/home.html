@@ -1,0 +1,42 @@
+<h1>Clinic Dashboard</h1>
+
+<hr>
+
+<h3>Overview</h3>
+<p>Total Patients: {{ total_patients }}</p>
+<p>Total Consultations: {{ total_consultations }}</p>
+
+<hr>
+
+<h3>Quick Actions</h3>
+
+<a href="{% url 'create_patient' %}">+ New Patient</a> |
+<a href="/patients/">Search Patients</a>
+<a href="/patients/">🔍 Start Consultation</a>
+<hr>
+
+<h3>Recent Patients</h3>
+
+{% for p in recent_patients %}
+    <p>
+        <a href="{% url 'patient_detail' p.id %}">
+            {{ p.patient_number }} - {{ p.first_name }} {{ p.last_name }}
+        </a>
+    </p>
+{% empty %}
+    <p>No patients yet</p>
+{% endfor %}
+
+<hr>
+
+<h3>Recent Consultations</h3>
+
+{% for c in recent_consultations %}
+    <p>
+        {{ c.created_at }} -
+        {{ c.patient.patient_number }} -
+        {{ c.diagnosis }}
+    </p>
+{% empty %}
+    <p>No consultations yet</p>
+{% endfor %}

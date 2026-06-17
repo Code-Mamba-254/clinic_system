@@ -1,0 +1,18 @@
+
+<p>
+    {{ patient.patient_number }}
+    -
+    {{ patient.first_name }}
+    {{ patient.last_name }}
+</p>
+
+<form method="POST">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">
+        Save Consultation
+    </button>
+
+</form>
