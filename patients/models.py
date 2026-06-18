@@ -1,51 +1,72 @@
 from django.db import models
-from django.utils.timezone import now
-
-
-def generate_patient_number():
-    year = now().year
-
-    last_patient = Patient.objects.filter(
-        patient_number__startswith=f"PT-{year}"
-    ).order_by("id").last()
-
-    if last_patient and last_patient.patient_number:
-        last_number = int(last_patient.patient_number.split("-")[-1])
-        new_number = last_number + 1
-    else:
-        new_number = 1
-
-    return f"PT-{year}-{new_number:06d}"
+from datetime import date
 
 
 class Patient(models.Model):
-    patient_number = models.CharField(
+
+    id_number = models.CharField(
         max_length=20,
         unique=True,
-        blank=True
+        null=True,
+        blank=True,
+        help_text="National ID or Passport Number"
     )
 
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
 
-    phone = models.CharField(
-        max_length=20,
-        blank=True
-    )
-
     gender = models.CharField(
-        max_length=10
+        max_length=10,
+        choices=[
+            ("Male", "Male"),
+            ("Female", "Female"),
+            ("Other", "Other"),
+        ]
     )
 
     date_of_birth = models.DateField()
 
-    created_at = models.DateTimeField(
-        auto_now_add=True
+    age = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        editable=False
     )
 
+    phone = models.CharField(max_length=20, blank=True)
+
+    patient_number = models.CharField(
+        max_length=20,
+        unique=True,
+        editable=False
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    # ----------------------------
+    # AUTO AGE CALCULATION
+    # ----------------------------
+    def calculate_age(self):
+        today = date.today()
+        return today.year - self.date_of_birth.year - (
+            (today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day)
+        )
+
+    # ----------------------------
+    # AUTO PATIENT NUMBER
+    # ----------------------------
     def save(self, *args, **kwargs):
+
+        # Auto age update
+        if self.date_of_birth:
+            self.age = self.calculate_age()
+
+        # Auto patient number (simple fallback if not already set)
         if not self.patient_number:
-            self.patient_number = generate_patient_number()
+            last = Patient.objects.order_by("-id").first()
+            next_id = 1 if not last else last.id + 1
+
+            year = date.today().year
+            self.patient_number = f"PT-{year}-{next_id:06d}"
 
         super().save(*args, **kwargs)
 

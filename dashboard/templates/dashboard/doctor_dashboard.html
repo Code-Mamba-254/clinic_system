@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>👨‍⚕️ Doctor Dashboard</h2>
+
+<div class="card">
+    <h3>Quick Actions</h3>
+    <a href="/patients/">Search Patients</a> |
+    <a href="/patients/">Register Patient</a>
+</div>
+
+<h3>My Recent Consultations</h3>
+
+{% for c in my_consultations %}
+<div class="card">
+    <p><strong>{{ c.patient.patient_number }}</strong></p>
+    <p>{{ c.patient.first_name }} {{ c.patient.last_name }}</p>
+    <p>{{ c.created_at }}</p>
+
+    <a href="/consultations/pdf/{{ c.id }}/">Download PDF</a>
+</div>
+{% empty %}
+<p>No consultations yet.</p>
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prescription</title>
+</head>
+
+<body style="font-family:Arial; padding:20px;">
+
+    <h2>Clinic Prescription</h2>
+
+    <hr>
+
+    <p><strong>Patient:</strong> {{ c.patient.first_name }} {{ c.patient.last_name }}</p>
+    <p><strong>Age:</strong> {{ c.patient.age }}</p>
+    <p><strong>Gender:</strong> {{ c.patient.gender }}</p>
+
+    <hr>
+
+    <p><strong>Diagnosis:</strong> {{ c.diagnosis }}</p>
+
+    <h3>Rx (Prescription)</h3>
+
+    <pre style="font-size:14px;">
+{{ c.prescription }}
+    </pre>
+
+    <hr>
+
+    <p><strong>Doctor:</strong> Dr. {{ c.doctor.get_full_name|default:c.doctor.username }}</p>
+    <p><strong>Date:</strong> {{ c.created_at }}</p>
+
+    <br>
+
+    <button onclick="window.print()">Print Prescription</button>
+
+</body>
+</html>

@@ -1,17 +1,66 @@
-
 <p>
-    {{ patient.patient_number }}
-    -
-    {{ patient.first_name }}
-    {{ patient.last_name }}
+    <strong>{{ patient.patient_number }}</strong> -
+    {{ patient.first_name }} {{ patient.last_name }}
 </p>
+
+<hr>
 
 <form method="POST">
     {% csrf_token %}
 
-    {{ form.as_p }}
+    <!-- ================= VITALS ================= -->
+    <h3>Vitals</h3>
 
-    <button type="submit">
+    <div style="display:flex; gap:10px;">
+        <div>
+            <label>Blood Pressure</label><br>
+            {{ form.blood_pressure }}
+        </div>
+
+        <div>
+            <label>Temperature</label><br>
+            {{ form.temperature }}
+        </div>
+
+        <div>
+            <label>Pulse Rate</label><br>
+            {{ form.pulse_rate }}
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- ================= COMPLAINT ================= -->
+    <h3>Chief Complaint</h3>
+    {{ form.complaint }}
+
+    <hr>
+
+    <!-- ================= DIAGNOSIS ================= -->
+    <h3>Diagnosis</h3>
+    {{ form.diagnosis }}
+
+    <hr>
+
+    <!-- ================= TREATMENT ================= -->
+    <h3>Treatment</h3>
+    {{ form.treatment }}
+
+    <hr>
+
+    <!-- ================= PRESCRIPTION ================= -->
+    <h3>Prescription (Rx)</h3>
+    {{ form.prescription }}
+
+    <hr>
+
+    <button type="submit" style="
+        padding:10px 15px;
+        background:#27ae60;
+        color:white;
+        border:none;
+        border-radius:5px;
+    ">
         Save Consultation
     </button>
 

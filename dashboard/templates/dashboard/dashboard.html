@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Doctor Dashboard</h2>
+
+<p style="color:gray;">
+    Welcome, {{ request.user.get_full_name|default:request.user.username }}
+</p>
+
+<hr>
+
+<!-- ================= STATS ================= -->
+<div style="display:flex; gap:10px; margin-bottom:20px;">
+
+    <div style="flex:1; background:#3498db; color:white; padding:15px; border-radius:6px;">
+        <h3>{{ patients_count }}</h3>
+        <p>Total Patients</p>
+    </div>
+
+    <div style="flex:1; background:#27ae60; color:white; padding:15px; border-radius:6px;">
+        <h3>{{ consultations_today }}</h3>
+        <p>Consultations Today</p>
+    </div>
+
+    <div style="flex:1; background:#8e44ad; color:white; padding:15px; border-radius:6px;">
+        <h3>{{ my_consultations|length }}</h3>
+        <p>My Recent Cases</p>
+    </div>
+
+</div>
+
+<!-- ================= QUICK ACTIONS ================= -->
+<div style="margin-bottom:20px;">
+    <a href="/patients/" style="padding:10px; background:#2c3e50; color:white; text-decoration:none; border-radius:5px;">
+        Search Patients
+    </a>
+
+    <a href="/patients/" style="padding:10px; background:#16a085; color:white; text-decoration:none; border-radius:5px; margin-left:5px;">
+        + New Patient
+    </a>
+</div>
+
+<hr>
+
+<!-- ================= TWO COLUMN LAYOUT ================= -->
+<div style="display:flex; gap:20px;">
+
+    <!-- LEFT -->
+    <div style="flex:1;">
+
+        <h3>My Recent Consultations</h3>
+
+        {% for c in my_consultations %}
+        <div style="border:1px solid #ddd; padding:10px; margin-bottom:10px;">
+            <p><strong>{{ c.patient.patient_number }}</strong></p>
+            <p>{{ c.patient.first_name }} {{ c.patient.last_name }}</p>
+            <p style="color:gray;">{{ c.created_at }}</p>
+
+            <a href="/patients/{{ c.patient.id }}/">Open</a> |
+            <a href="{% url 'consultation_pdf' c.id %}">PDF</a>
+        </div>
+        {% empty %}
+        <p>No consultations yet.</p>
+        {% endfor %}
+
+    </div>
+
+    <!-- RIGHT -->
+    <div style="flex:1;">
+
+        <h3>Recent Patients</h3>
+
+        {% for p in recent_patients %}
+        <div style="border:1px solid #ddd; padding:10px; margin-bottom:10px;">
+            <p><strong>{{ p.patient_number }}</strong></p>
+            <p>{{ p.first_name }} {{ p.last_name }}</p>
+
+            <a href="/patients/{{ p.id }}/">Open Profile</a>
+        </div>
+        {% empty %}
+        <p>No patients yet.</p>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

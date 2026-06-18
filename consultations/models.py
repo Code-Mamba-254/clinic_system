@@ -44,10 +44,10 @@ class Consultation(models.Model):
     treatment = models.TextField(blank=True)
 
     remarks = models.TextField(blank=True)
-
+    prescription = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(
         auto_now_add=True
     )
-
+    
     def __str__(self):
         return f"{self.patient.patient_number} - {self.created_at.date()}"

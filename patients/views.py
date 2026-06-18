@@ -3,6 +3,9 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from .models import Patient
 from .forms import PatientForm
+from core.permissions import receptionist_required
+from consultations.models import Consultation
+
 @login_required
 def create_patient(request):
     if request.method == "POST":
@@ -32,13 +35,18 @@ def patient_list(request):
         "patients": patients,
         "query": query
     })
+
+
 @login_required
 def patient_detail(request, pk):
-    patient = get_object_or_404(Patient, pk=pk)
 
-    consultations = patient.consultations.all().order_by("-created_at")
+    patient = get_object_or_404(Patient, id=pk)
+
+    consultations = Consultation.objects.filter(
+        patient=patient
+    ).select_related("doctor").order_by("-created_at")
 
     return render(request, "patients/patient_detail.html", {
         "patient": patient,
-        "consultations": consultations
+        "consultations": consultations,
     })

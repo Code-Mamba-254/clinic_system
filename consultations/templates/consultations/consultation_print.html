@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clinic Note</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 30px;
+            color: #333;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            margin-bottom: 20px;
+        }
+
+        .section {
+            margin-bottom: 15px;
+        }
+
+        .label {
+            font-weight: bold;
+        }
+
+        .box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h2>CLINIC MEDICAL NOTE</h2>
+</div>
+
+<div class="section">
+    <span class="label">Patient:</span>
+    {{ c.patient.first_name }} {{ c.patient.last_name }}
+</div>
+
+<div class="section">
+    <span class="label">Patient Number:</span>
+    {{ c.patient.patient_number }}
+</div>
+
+<div class="section">
+    <span class="label">Age / Gender:</span>
+    {{ c.patient.age }} / {{ c.patient.gender }}
+</div>
+
+<hr>
+
+<div class="section">
+    <span class="label">Doctor:</span>
+    Dr. {{ c.doctor.get_full_name|default:c.doctor.username }}
+</div>
+
+<div class="section">
+    <span class="label">Date:</span>
+    {{ c.created_at }}
+</div>
+
+<hr>
+
+<div class="section">
+    <span class="label">Chief Complaint</span>
+    <div class="box">{{ c.complaint }}</div>
+</div>
+
+<div class="section">
+    <span class="label">Vitals</span>
+    <div class="box">
+        BP: {{ c.blood_pressure }} <br>
+        Temp: {{ c.temperature }} <br>
+        Pulse: {{ c.pulse_rate }}
+    </div>
+</div>
+
+<div class="section">
+    <span class="label">Diagnosis</span>
+    <div class="box">{{ c.diagnosis }}</div>
+</div>
+
+<div class="section">
+    <span class="label">Treatment</span>
+    <div class="box">{{ c.treatment }}</div>
+</div>
+
+<div class="section">
+    <span class="label">Prescription (Rx)</span>
+    <div class="box" style="white-space: pre-line;">
+        {{ c.prescription }}
+    </div>
+</div>
+
+<br>
+
+<button onclick="window.print()">Print</button>
+
+</body>
+</html>

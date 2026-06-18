@@ -1,18 +1,135 @@
-<h2>{{ patient.patient_number }}</h2>
+{% extends "base.html" %}
+{% block content %}
 
-<div>
-    <p><strong>Name:</strong> {{ patient.first_name }} {{ patient.last_name }}</p>
-    <p><strong>Phone:</strong> {{ patient.phone }}</p>
+<!-- =========================
+     PATIENT HEADER BAR
+========================= -->
+<div style="background:#2c3e50; color:white; padding:15px; border-radius:6px;">
+
+    <h2 style="margin:0;">
+        {{ patient.patient_number }}
+    </h2>
+
+    <p style="margin:5px 0;">
+        {{ patient.first_name }} {{ patient.last_name }}
+    </p>
+
+    <small>
+        Age: {{ patient.age }} |
+        Gender: {{ patient.gender }} |
+        ID: {{ patient.id_number|default:"Not set" }}
+    </small>
+
+</div>
+
+<br>
+
+<!-- =========================
+     QUICK ACTIONS
+========================= -->
+<div style="margin-bottom:15px;">
+
+    <a href="{% url 'patient_list' %}"
+       style="padding:8px 12px; background:#3498db; color:white; text-decoration:none; border-radius:4px;">
+        Back to Patients
+    </a>
+
 </div>
 
 <hr>
 
-<h3>Consultation History</h3>
+<!-- =========================
+     DEMOGRAPHIC CARD
+========================= -->
+<div style="display:flex; gap:20px; margin-bottom:20px;">
+
+    <div style="flex:1; border:1px solid #ddd; padding:10px; border-radius:6px;">
+        <h4>Patient Details</h4>
+        <p><strong>Phone:</strong> {{ patient.phone }}</p>
+        <p><strong>DOB:</strong> {{ patient.date_of_birth }}</p>
+        <p><strong>Age:</strong> {{ patient.age }}</p>
+        <p><strong>Gender:</strong> {{ patient.gender }}</p>
+        <p><strong>ID Number:</strong> {{ patient.id_number|default:"Not provided" }}</p>
+    </div>
+
+    <div style="flex:1; border:1px solid #ddd; padding:10px; border-radius:6px;">
+        <h4>Clinical Summary</h4>
+        <p><strong>Total Visits:</strong> {{ consultations|length }}</p>
+
+        {% if consultations %}
+            <p><strong>Last Visit:</strong> {{ consultations.0.created_at }}</p>
+        {% else %}
+            <p>No consultations yet</p>
+        {% endif %}
+    </div>
+
+</div>
+
+<hr>
+
+<!-- =========================
+     DOCTOR CONTEXT
+========================= -->
+<div style="background:#e8f5e9; padding:10px; border-radius:6px; margin-bottom:15px;">
+    🧑‍⚕️ You are documenting as:
+    <strong>Dr {{ request.user.username }}</strong>
+</div>
+
+<!-- =========================
+     INLINE CONSULTATION FORM
+========================= -->
+<div style="border:1px solid #ddd; padding:15px; border-radius:6px; background:white; margin-bottom:20px;">
+
+    <h3>➕ New Consultation</h3>
+
+    <form method="POST" action="{% url 'create_consultation' patient.id %}">
+        {% csrf_token %}
+
+        <label>Chief Complaint</label><br>
+        <textarea name="complaint" required style="width:100%; height:60px;"></textarea><br><br>
+
+        <label>Blood Pressure</label><br>
+        <input type="text" name="blood_pressure" style="width:100%;"><br><br>
+
+        <label>Temperature</label><br>
+        <input type="text" name="temperature" style="width:100%;"><br><br>
+
+        <label>Pulse Rate</label><br>
+        <input type="text" name="pulse_rate" style="width:100%;"><br><br>
+
+        <label>Diagnosis</label><br>
+        <textarea name="diagnosis" style="width:100%; height:60px;"></textarea><br><br>
+
+        <label>Treatment</label><br>
+        <textarea name="treatment" style="width:100%; height:80px;"></textarea><br><br>
+
+        <label>Prescription</label><br>
+        <textarea name="prescription" style="width:100%; height:120px;"></textarea><br><br>
+
+        <button type="submit"
+                style="background:green; color:white; padding:10px; border:none; border-radius:4px;">
+            Save Consultation
+        </button>
+    </form>
+
+</div>
+
+<hr>
+
+<!-- =========================
+     CONSULTATION HISTORY
+========================= -->
+<h3>Medical History</h3>
 
 {% for c in consultations %}
-<div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+<div style="border:1px solid #ddd; border-left:5px solid #2c3e50; padding:12px; margin-bottom:10px; border-radius:6px; background:#fafafa;">
 
-    <h4>{{ c.created_at }}</h4>
+    <p><strong>Date:</strong> {{ c.created_at }}</p>
+
+    <p>
+        <strong>Doctor:</strong>
+        Dr {{ c.doctor.get_full_name|default:c.doctor.username }}
+    </p>
 
     <p><strong>Complaint:</strong> {{ c.complaint }}</p>
 
@@ -23,11 +140,17 @@
     </p>
 
     <p><strong>Diagnosis:</strong> {{ c.diagnosis }}</p>
-
     <p><strong>Treatment:</strong> {{ c.treatment }}</p>
 
+    <p><strong>Prescription:</strong></p>
+    <pre style="background:#f4f4f4; padding:10px;">{{ c.prescription }}</pre>
+
+    <a href="{% url 'consultation_print' c.id %}">Print Note</a> |
+    <a href="{% url 'consultation_pdf' c.id %}" style="color:green;">Download PDF</a>
+
 </div>
+{% empty %}
+    <p>No consultations recorded for this patient.</p>
 {% endfor %}
-<a href="{% url 'create_consultation' patient.id %}">
-    + New Consultation
-</a>
+
+{% endblock %}

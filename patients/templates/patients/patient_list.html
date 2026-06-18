@@ -1,44 +1,92 @@
+{% extends "base.html" %}
+{% block content %}
+
 <h2>Patients</h2>
 
+<!-- SEARCH BOX -->
 <input type="text" id="searchBox" placeholder="Search patients..." />
+
+<p style="color:gray;">
+    Type patient name, number, or phone to search instantly
+</p>
 
 <hr>
 
+<!-- RESULTS AREA -->
 <div id="results"></div>
+
+<!-- OPTIONAL: fallback message -->
+<noscript>
+    <p style="color:red;">
+        JavaScript is required for instant search to work.
+    </p>
+</noscript>
 
 <script>
 const input = document.getElementById("searchBox");
 const results = document.getElementById("results");
 
-input.addEventListener("input", async function () {
+let timer = null;
 
-    const query = input.value;
+input.addEventListener("input", function () {
 
-    if (query.length < 1) {
-        results.innerHTML = "";
-        return;
-    }
+    clearTimeout(timer);
 
-    const response = await fetch(`/api/patients/?q=` + encodeURIComponent(query));
-    const data = await response.json();
+    timer = setTimeout(async () => {
 
-    results.innerHTML = "";
+        const query = input.value.trim();
 
-    data.forEach(patient => {
-        results.innerHTML += `
-            <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
-                <p><strong>${patient.patient_number}</strong> - ${patient.name}</p>
-                <p>${patient.phone}</p>
+        if (query.length < 1) {
+            results.innerHTML = "";
+            return;
+        }
 
-                <a href="/patients/${patient.id}/">
-                    Open Profile
-                </a> |
+        try {
+            const response = await fetch(
+    `/dashboard/search/?q=` + encodeURIComponent(query)
+);
 
-                <a href="/consultations/new/${patient.id}/">
-                    Start Consultation
-                </a>
-            </div>
-        `;
-    });
+            const data = await response.json();
+
+            results.innerHTML = "";
+
+            if (data.length === 0) {
+                results.innerHTML = "<p>No patients found</p>";
+                return;
+            }
+
+            data.forEach(patient => {
+                results.innerHTML += `
+                    <div style="
+                        border:1px solid #ddd;
+                        padding:12px;
+                        margin-bottom:10px;
+                        border-radius:6px;
+                        background:#fff;
+                    ">
+                        <p><strong>${patient.patient_number}</strong></p>
+                        <p>${patient.name}</p>
+                        <p style="color:gray;">${patient.phone}</p>
+
+                        <a href="/patients/${patient.id}/">
+                            Open Profile
+                        </a>
+                        |
+                        <a href="/consultations/new/${patient.id}/">
+                            Start Consultation
+                        </a>
+                    </div>
+                `;
+            });
+
+        } catch (error) {
+            console.error("Search error:", error);
+            results.innerHTML = "<p style='color:red;'>Search failed. Check API.</p>";
+        }
+
+    }, 300); // debounce delay
+
 });
 </script>
+
+{% endblock %}

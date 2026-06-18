@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>🧾 Reception Dashboard</h2>
+
+<div class="card">
+    <a href="/patients/">➕ Register Patient</a>
+</div>
+
+<h3>Recent Patients</h3>
+
+{% for p in patients %}
+<div class="card">
+    <p><strong>{{ p.patient_number }}</strong></p>
+    <p>{{ p.first_name }} {{ p.last_name }}</p>
+    <p>{{ p.phone }}</p>
+
+    <a href="/patients/{{ p.id }}/">Open</a>
+</div>
+{% endfor %}
+
+{% endblock %}

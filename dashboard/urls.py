@@ -1,8 +1,11 @@
 from django.urls import path
-from .views import dashboard, start_consultation,patient_search_api
+from . import views
 
 urlpatterns = [
-    path("", dashboard, name="dashboard"),
-    path("start-consultation/", start_consultation, name="start_consultation"),
-    path("api/patients/", patient_search_api, name="patient_search_api"),
+    path("doctor/", views.doctor_dashboard, name="doctor_dashboard"),
+    path("reception/", views.reception_dashboard, name="reception_dashboard"),
+    path("admin-dashboard/", views.admin_dashboard, name="admin_dashboard"),
+    path("dashboard/", views.dashboard, name="dashboard"),
+    path("search/", views.patient_search_api, name="patient_search_api"),
+    path("start/", views.start_consultation, name="start_consultation"),
 ]
