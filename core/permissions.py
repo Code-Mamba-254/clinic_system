@@ -1,5 +1,5 @@
 from django.http import HttpResponseForbidden
-
+from django.contrib.auth.decorators import login_required
 
 def is_doctor(user):
     return user.groups.filter(name="Doctor").exists()
@@ -18,6 +18,7 @@ def is_admin(user):
 # -----------------------------
 
 def doctor_required(view_func):
+    @login_required
     def wrapper(request, *args, **kwargs):
         if is_doctor(request.user):
             return view_func(request, *args, **kwargs)
@@ -26,6 +27,7 @@ def doctor_required(view_func):
 
 
 def receptionist_required(view_func):
+    @login_required
     def wrapper(request, *args, **kwargs):
         if is_receptionist(request.user):
             return view_func(request, *args, **kwargs)
@@ -34,6 +36,7 @@ def receptionist_required(view_func):
 
 
 def admin_required(view_func):
+    @login_required
     def wrapper(request, *args, **kwargs):
         if is_admin(request.user):
             return view_func(request, *args, **kwargs)
