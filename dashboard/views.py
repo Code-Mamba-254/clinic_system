@@ -41,7 +41,7 @@ def doctor_dashboard(request):
         doctor=request.user
     ).order_by("-created_at")[:10]
 
-    return render(request, "dashboard/doctor_dashboard.html", {
+    return render(request, "dashboard/dashboard.html", {
         "my_consultations": my_consultations
     })
 @login_required
